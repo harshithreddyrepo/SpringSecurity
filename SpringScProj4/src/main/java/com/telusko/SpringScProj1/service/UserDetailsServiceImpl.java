@@ -1,32 +1,26 @@
 package com.telusko.SpringScProj1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.telusko.SpringScProj1.dao.User;
 import com.telusko.SpringScProj1.dao.UserRepo;
-import com.telusko.SpringScProj1.dao.Users;
 
 @Service
-public class MyUserDetails implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	private UserRepo repo;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Users user = repo.findByName(username);
-		if(user==null)
-		{
-			System.out.println("404 not found");
-			throw new UsernameNotFoundException("404 user not found");
-		}
-		
-		return User.withUsername(user.getName())
+		User user = repo.findByName(username);
+		return org.springframework.security.core.userdetails.User.withUsername(user.getName())
 				.password(user.getPassword())
+				.roles(user.getRole())
 				.build();
 	}
 
